@@ -1,5 +1,6 @@
 import socket
 import time
+import secrets
 
 class Validator:
 
@@ -34,7 +35,7 @@ class Command_Handler:
         client_receiver = Client_Receiver(self.server_socket)
 
         if (client_sender.send(command)):
-            feedback = client_receiver.receive().decode("utf-8")
+            feedback = client_receiver.receive()
             print(feedback)
 
 class Client_Sender:
@@ -50,7 +51,7 @@ class Client_Sender:
             print(f"There has been an error while sending the size!\n")
             return False
         
-        time.sleep(0.5)
+        time.sleep(0.1)
         
         try:
             self.server_socket.send(bytes(data, "utf-8"))
@@ -68,9 +69,9 @@ class Client_Receiver:
     def receive(self):
         try:
             size = int(self.server_socket.recv(5))
-            return self.server_socket.recv(size)
+            return self.server_socket.recv(size).decode("utf-8")
         except Exception as e:
-            return bytes(f"There has been an error while receiving the data!\nError message: {e}", "utf-8")
+            return f"There has been an error while receiving the data!\nError message: {e}\n"
 
 class Server_Connection:
     
@@ -120,7 +121,7 @@ if __name__ == "__main__":
 
     client_receiver = Client_Receiver(server_socket)
 
-    message = client_receiver.receive().decode("utf-8")
+    message = client_receiver.receive()
     print(f"{message}\n")
 
     while True:
